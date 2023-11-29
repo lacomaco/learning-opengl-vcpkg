@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "triangle.h"
+#include "shader.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
@@ -37,36 +38,29 @@ int main()
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+	Shader* triangleShader = new Shader(
+		"./triangle-vertex-shader.glsl",
+		"./triangle-fragment-shader.glsl"
+	);
 
 
 	float vertices[] = {
-		 0.5f,  0.5f, 0.0f,  // top right
-		 0.5f, -0.5f, 0.0f,  // bottom right
-		-0.5f, -0.5f, 0.0f,  // bottom left
-		-0.5f,  0.5f, 0.0f   // top left 
+		// positions         // colors
+		 0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // bottom right
+		-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom left
+		 0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // top 
 	};
 
 	std::cout <<"triangle 바깥에서 sizeof 측정 " << sizeof(vertices) << std::endl;
 
-	Triangle* triangle1 = new Triangle(vertices,sizeof(vertices)/sizeof(float));
-
-	// 임시 데이터
-	float vertices2[] = {
-		 0.5f,  0.5f, 0.0f,  // top right
-		 0.5f, -0.5f, 0.0f,  // bottom right
-		-0.5f, -0.8f, 0.0f,  // bottom left
-		-0.5f,  0.5f, 0.0f   // top left 
-	};
-
-	Triangle* triangle2 = new Triangle(vertices2,sizeof(vertices2)/sizeof(float));
-
+	Triangle* triangle1 = new Triangle(vertices,sizeof(vertices)/sizeof(float), triangleShader);
 
 	while (!glfwWindowShouldClose(window)) {
 		processInput(window);
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		triangle1->render();
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -74,7 +68,6 @@ int main()
 
 	try {
 		delete triangle1;
-		delete triangle2;
 	}catch(std::exception e){
 		std::cout << e.what() << std::endl;
 	}

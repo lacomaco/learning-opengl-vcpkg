@@ -4,9 +4,8 @@
 
 #include <iostream>
 #include <glad/glad.h>
-#include "shader-util.h"
+#include "shader.h"
 
-extern unsigned int TRIANGLE_SHADER_PROGRAM;
 extern unsigned int indices[];
 
 class Triangle {
@@ -16,7 +15,9 @@ public:
 	unsigned int EBO; // element buffer object
 	float* vertices;
 
-	Triangle(float vertices[],int size);
+	Shader* shader;
+
+	Triangle(float vertices[],int size, Shader* shader);
 	void render();
 
 	~Triangle();

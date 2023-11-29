@@ -1,38 +1,15 @@
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include "triangle.h"
-#include "shader-util.h"
-
-// 초기 -1로 선언.
-unsigned int TRIANGLE_SHADER_PROGRAM = -1;
+#include "shader.h"
 
 unsigned int indices[] = {
-	0,1,3,
-	1,2,3
+	0,1,2
 };
 
-Triangle::Triangle(float vertices[], int size) {
-	if (TRIANGLE_SHADER_PROGRAM == -1) {
-		unsigned int vertexShader = createShaderProgram("./triangle-vertex-shader.glsl", GL_VERTEX_SHADER);
-		unsigned int fragmentShader = createShaderProgram("./triangle-fragment-shader.glsl", GL_FRAGMENT_SHADER);
+Triangle::Triangle(float vertices[], int size, Shader* shader) {
+	this->shader = shader;
 
-		TRIANGLE_SHADER_PROGRAM = glCreateProgram();
-		std::cout << TRIANGLE_SHADER_PROGRAM << std::endl;
-		glAttachShader(TRIANGLE_SHADER_PROGRAM, vertexShader);
-		glAttachShader(TRIANGLE_SHADER_PROGRAM, fragmentShader);
-		glLinkProgram(TRIANGLE_SHADER_PROGRAM);
-
-		glDeleteShader(vertexShader);
-		glDeleteShader(fragmentShader);
-
-		int success;
-		char infoLog[512];
-		glGetProgramiv(TRIANGLE_SHADER_PROGRAM, GL_LINK_STATUS, &success);
-
-		if (!success) {
-			glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-			std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-		}
-	}
 	this->vertices = new float[size];
 	std::copy(vertices, vertices + size, this->vertices);
 
@@ -50,8 +27,13 @@ Triangle::Triangle(float vertices[], int size) {
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, size * sizeof(float), this->vertices, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), NULL);
+	// vertex attribute pointer
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), NULL);
 	glEnableVertexAttribArray(0);
+
+	// color attribute pointer
+	glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	// EBO Bind
 	unsigned int EBO;
@@ -72,7 +54,7 @@ Triangle::Triangle(float vertices[], int size) {
 }
 
 void Triangle::render() {
-	glUseProgram(TRIANGLE_SHADER_PROGRAM);
+	this->shader->use();
 	glBindVertexArray(this->VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
