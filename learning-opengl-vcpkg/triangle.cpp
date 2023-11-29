@@ -5,6 +5,11 @@
 // 초기 -1로 선언.
 unsigned int TRIANGLE_SHADER_PROGRAM = -1;
 
+unsigned int indices[] = {
+	0,1,3,
+	1,2,3
+};
+
 Triangle::Triangle(float vertices[], int size) {
 	if (TRIANGLE_SHADER_PROGRAM == -1) {
 		unsigned int vertexShader = createShaderProgram("./triangle-vertex-shader.glsl", GL_VERTEX_SHADER);
@@ -28,8 +33,6 @@ Triangle::Triangle(float vertices[], int size) {
 			std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
 		}
 	}
-
-	std::cout << "Triangle 생성자에서 sizeof 측정 " << size << std::endl;
 	this->vertices = new float[size];
 	std::copy(vertices, vertices + size, this->vertices);
 
@@ -43,26 +46,40 @@ Triangle::Triangle(float vertices[], int size) {
 	glGenBuffers(1, &VBO);
 	this->VBO = VBO;
 
+
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, size * sizeof(float), this->vertices, GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), NULL);
 	glEnableVertexAttribArray(0);
 
+	// EBO Bind
+	unsigned int EBO;
+	glGenBuffers(1, &EBO);
+	this->EBO = EBO;
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+
+
+
 	// VAO unbind
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 }
 
 void Triangle::render() {
 	glUseProgram(TRIANGLE_SHADER_PROGRAM);
 	glBindVertexArray(this->VAO);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 Triangle::~Triangle() {
 	delete[] this->vertices;
 	glDeleteVertexArrays(1, &this->VAO);
 	glDeleteBuffers(1, &this->VBO);
+	glDeleteBuffers(1, &this->EBO);
 }
