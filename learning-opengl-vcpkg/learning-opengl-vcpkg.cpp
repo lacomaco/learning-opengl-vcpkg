@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "triangle.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
@@ -18,7 +19,6 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	// glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
 	GLFWwindow* window = glfwCreateWindow(800, 600, "Learn OpenGL", NULL, NULL);
 	if (window == NULL) {
@@ -37,13 +37,43 @@ int main()
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+
+
+	float vertices[] = {
+	-0.5f, -0.5f, 0.0f,
+	 0.5f, -0.5f, 0.0f,
+	 0.0f,  0.5f, 0.0f
+	};
+
+	std::cout <<"triangle 바깥에서 sizeof 측정 " << sizeof(vertices) << std::endl;
+
+	Triangle* triangle1 = new Triangle(vertices,sizeof(vertices)/sizeof(float));
+
+	// 임시 데이터
+	float vertices2[] = {
+	-0.5f, -0.5f, 0.0f,
+	0.5f, -0.5f, 0.0f,
+	0.0f,  0.9f, 0.0f
+	};
+
+	Triangle* triangle2 = new Triangle(vertices2,sizeof(vertices2)/sizeof(float));
+
+
 	while (!glfwWindowShouldClose(window)) {
 		processInput(window);
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+		triangle1->render();
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+	}
+
+	try {
+		delete triangle1;
+		delete triangle2;
+	}catch(std::exception e){
+		std::cout << e.what() << std::endl;
 	}
 
 	glfwTerminate();

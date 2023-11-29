@@ -128,6 +128,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="learning-opengl-vcpkg.cpp" />
+    <ClCompile Include="shader-util.cpp" />
+    <ClCompile Include="triangle.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="triangle-fragment-shader.glsl" />
+    <None Include="triangle-vertex-shader.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="shader-util.h" />
+    <ClInclude Include="triangle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

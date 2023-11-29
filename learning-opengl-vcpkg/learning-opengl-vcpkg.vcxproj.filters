@@ -18,5 +18,27 @@
     <ClCompile Include="learning-opengl-vcpkg.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="shader-util.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="triangle.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="triangle-vertex-shader.glsl">
+      <Filter>소스 파일</Filter>
+    </None>
+    <None Include="triangle-fragment-shader.glsl">
+      <Filter>소스 파일</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="shader-util.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="triangle.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
